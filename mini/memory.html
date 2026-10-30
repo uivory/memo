@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>메모리 카드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --table: #f3e8d8;          /* 밝은 원목 테이블 */
+      --paper: #fffaf2;          /* 카드 종이 */
+      --ink: #2c2a33;
+      --muted: #7d7468;
+      --edge: rgba(44, 42, 51, 0.12);
+
+      /* 뒷면 물결 무늬에 쓰는 팔레트 */
+      --blue: #1f5fa8;
+      --orange: #f28c28;
+      --yellow: #f5c84c;
+      --pink: #f4a7c0;
+      --mint: #8fd3b6;
+      --red: #e8473c;
+      --sky: #9ed4f0;
+
+      --cols: 4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(70% 60% at 50% 20%, rgba(255, 255, 255, 0.7), transparent 70%),
+        repeating-linear-gradient(90deg,
+          rgba(150, 110, 70, 0.035) 0 2px, transparent 2px 9px,
+          rgba(150, 110, 70, 0.025) 9px 10px, transparent 10px 23px),
+        var(--table);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo",
+                   "Malgun Gothic", "Segoe UI", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      word-break: keep-all;
+    }
+
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 48px 32px 80px;
+    }
+
+    /* Header */
+    header { text-align: center; margin-bottom: 28px; }
+    .fan {
+      position: relative;
+      width: 96px;
+      height: 64px;
+      margin: 0 auto 12px;
+    }
+    .fan i {
+      position: absolute;
+      left: 34px;
+      bottom: 0;
+      width: 30px;
+      height: 42px;
+      border: 2px solid var(--paper);
+      border-radius: 6px;
+      box-shadow: 0 3px 8px rgba(44, 42, 51, 0.15);
+      transform-origin: 50% 100%;
+    }
+    .fan i:nth-child(1) { background: repeating-linear-gradient(90deg, #f9c6d6 0 4px, #fde3eb 4px 8px); transform: rotate(-28deg); }
+    .fan i:nth-child(2) { background: repeating-linear-gradient(90deg, #a9e2c8 0 4px, #d8f2e5 4px 8px); transform: rotate(-10deg); }
+    .fan i:nth-child(3) { background: repeating-linear-gradient(90deg, #fbe08e 0 4px, #fdf0c6 4px 8px); transform: rotate(8deg); }
+    .fan i:nth-child(4) { background: var(--squiggle) center / cover, var(--paper); transform: rotate(26deg); }
+
+    header h1 {
+      font-family: "Jua", "Malgun Gothic", sans-serif;
+      font-weight: 400;
+      font-size: clamp(36px, 6vw, 54px);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+    header h1 span:nth-child(1) { color: var(--blue); }
+    header h1 span:nth-child(2) { color: var(--red); }
+    header h1 span:nth-child(3) { color: var(--orange); }
+    header h1 span:nth-child(5) { color: #3aa77c; }
+    header h1 span:nth-child(6) { color: #d9608a; }
+    header p { margin-top: 6px; color: var(--muted); font-size: 16px; }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .chip {
+      padding: 9px 18px;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Jua", "Malgun Gothic", sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 var(--ink);
+      transition: transform .12s ease, box-shadow .12s ease, background .2s ease;
+    }
+    .chip:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--ink); }
+    .chip:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+    .chip[data-level="easy"][aria-pressed="true"]   { background: #bfe9d5; }
+    .chip[data-level="normal"][aria-pressed="true"] { background: #fde7a0; }
+    .chip[data-level="hard"][aria-pressed="true"]   { background: #fbcbd9; }
+    .chip.restart { background: var(--blue); color: #fff; }
+    .chip:focus-visible, .card:focus-visible, .btn:focus-visible {
+      outline: 3px solid var(--orange);
+      outline-offset: 3px;
+    }
+
+    /* Status */
+    .status {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+      font-size: 14px;
+    }
+    .status span {
+      padding: 4px 14px;
+      border-radius: 999px;
+      background: rgba(255, 250, 242, 0.8);
+      border: 1px solid var(--edge);
+      color: var(--muted);
+    }
+    .status b {
+      margin-left: 4px;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Board */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(var(--cols), 1fr);
+      gap: 16px;
+      max-width: calc(var(--cols) * 130px);
+      margin: 0 auto;
+      perspective: 1000px;
+    }
+    .card {
+      position: relative;
+      aspect-ratio: 5 / 7;
+      border: 0;
+      background: none;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.3, 1.3, .5, 1);
+    }
+    /* 테이블 위에 놓인 듯 살짝씩 기울임 */
+    .card:nth-child(3n)   { rotate: -1.2deg; }
+    .card:nth-child(4n+1) { rotate: 1deg; }
+    .card:nth-child(5n+2) { rotate: -0.6deg; }
+    .card.flipped, .card.matched { transform: rotateY(180deg); cursor: default; }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      border: 5px solid var(--paper);
+      box-shadow: 0 1px 0 var(--edge), 0 6px 14px rgba(44, 42, 51, 0.14);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    /* 뒷면: 크림색 종이 위 컬러 물결 */
+    .back {
+      background: var(--squiggle) center / cover, var(--paper);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .card:not(.flipped):not(.matched):hover .back {
+      transform: translateY(-5px);
+      box-shadow: 0 1px 0 var(--edge), 0 14px 22px rgba(44, 42, 51, 0.2);
+    }
+
+    /* 앞면: 파스텔 세로 줄무늬 + 모서리 인덱스 */
+    .front {
+      --stripe: #a9e2c8;
+      --stripe-light: #d8f2e5;
+      transform: rotateY(180deg);
+      display: grid;
+      place-items: center;
+      background: repeating-linear-gradient(90deg,
+        var(--stripe) 0 9px, var(--stripe-light) 9px 18px);
+    }
+    .front .pip { font-size: clamp(30px, 6vw, 50px); filter: drop-shadow(0 2px 0 rgba(255, 255, 255, 0.7)); }
+    .front .corner {
+      position: absolute;
+      font-size: clamp(11px, 1.8vw, 15px);
+      line-height: 1;
+    }
+    .front .corner.tl { top: 6px; left: 6px; }
+    .front .corner.br { right: 6px; bottom: 6px; transform: rotate(180deg); }
+
+    .card.matched .front {
+      box-shadow: 0 0 0 3px var(--ink), 0 8px 18px rgba(44, 42, 51, 0.2);
+      animation: pop .5s ease .25s;
+    }
+    @keyframes pop {
+      50% { transform: rotateY(180deg) scale(1.1) rotate(-3deg); }
+    }
+
+    /* Win overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(243, 232, 216, 0.7);
+      backdrop-filter: blur(5px);
+    }
+    .overlay[hidden] { display: none; }
+    .modal {
+      position: relative;
+      max-width: 360px;
+      width: 100%;
+      overflow: hidden;
+      text-align: center;
+      padding: 104px 32px 36px;
+      border: 6px solid var(--paper);
+      border-radius: 20px;
+      background:
+        var(--squiggle) center top / 100% 90px no-repeat,
+        var(--paper);
+      box-shadow: 0 20px 50px rgba(44, 42, 51, 0.25);
+      animation: deal .45s cubic-bezier(.3, 1.4, .5, 1);
+    }
+    @keyframes deal {
+      from { transform: translateY(40px) rotate(-6deg) scale(.9); opacity: 0; }
+    }
+    .modal h2 {
+      font-family: "Jua", "Malgun Gothic", sans-serif;
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .modal p { color: var(--muted); margin-bottom: 26px; }
+    .btn {
+      padding: 12px 28px;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      background: var(--yellow);
+      color: var(--ink);
+      font-family: "Jua", "Malgun Gothic", sans-serif;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 var(--ink);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--ink); }
+
+    /* 뒷면 물결 무늬 (SVG) */
+    :root {
+      --squiggle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='xMidYMid slice'%3E%3Cg fill='none' stroke-linecap='round' stroke-width='7'%3E%3Cpath d='M8 14c10-8 18 6 28-2s14-10 22-4' stroke='%23e8473c'/%3E%3Cpath d='M62 10c8 6 16-4 26 4' stroke='%23f28c28'/%3E%3Cpath d='M14 40c14-10 24 8 40-2s20-12 36-2' stroke='%238fd3b6'/%3E%3Cpath d='M70 34c-6 10 4 18-4 28s-14 6-18 14' stroke='%231f5fa8'/%3E%3Cpath d='M6 70c12 2 14-12 26-8s8 16 20 12' stroke='%23f4a7c0'/%3E%3Cpath d='M20 96c10-10 22 4 32-6' stroke='%23f5c84c'/%3E%3Cpath d='M64 88c10 8 22-6 30 4' stroke='%239ed4f0'/%3E%3Cpath d='M8 122c12-8 20 6 32-2s16-8 26 0' stroke='%231f5fa8'/%3E%3Cpath d='M76 112c-4 10 6 14 0 24' stroke='%23e8473c'/%3E%3C/g%3E%3Cg%3E%3Ccircle cx='50' cy='22' r='3.5' fill='%23f5c84c'/%3E%3Ccircle cx='86' cy='54' r='4' fill='%23e8473c'/%3E%3Ccircle cx='40' cy='80' r='3' fill='%23f28c28'/%3E%3Ccircle cx='12' cy='104' r='3.5' fill='%239ed4f0'/%3E%3Ccircle cx='58' cy='110' r='3' fill='%23f4a7c0'/%3E%3Ccircle cx='90' cy='132' r='3.5' fill='%23f5c84c'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .container { padding: 32px 16px 56px; }
+      .board { gap: 10px; }
+      .board.hard { --cols: 4 !important; }  /* 인라인 --cols: 6 덮어쓰기 */
+      .face { border-width: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="fan" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <h1><span>메</span><span>모</span><span>리</span> <span>카</span><span>드</span></h1>
+      <p>카드를 뒤집어 같은 그림 두 장을 찾아보세요.</p>
+    </header>
+
+    <div class="controls">
+      <button class="chip" data-level="easy" aria-pressed="false">쉬움 4×3</button>
+      <button class="chip" data-level="normal" aria-pressed="true">보통 4×4</button>
+      <button class="chip" data-level="hard" aria-pressed="false">어려움 6×4</button>
+      <button class="chip restart" id="restart">다시 시작</button>
+    </div>
+
+    <div class="status">
+      <span>시도 <b id="moves">0</b></span>
+      <span>맞춘 쌍 <b id="pairs">0 / 0</b></span>
+      <span>시간 <b id="time">0:00</b></span>
+    </div>
+
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="modal" role="dialog" aria-labelledby="win-title">
+      <h2 id="win-title">완료! 🎉</h2>
+      <p id="win-text"></p>
+      <button class="btn" id="again">다시 하기</button>
+    </div>
+  </div>
+
+  <script>
+    const EMOJIS = ['🍎', '🐶', '🚀', '🌈', '🎸', '🍩', '🐱', '🌵', '⚽', '🎈', '🦊', '🍉', '🐙', '🌻'];
+    // 앞면 줄무늬 [진한 색, 연한 색] — 쌍마다 하나씩
+    const STRIPES = [
+      ['#a9e2c8', '#d8f2e5'], ['#f9c6d6', '#fde3eb'], ['#fbe08e', '#fdf0c6'],
+      ['#a8d8f2', '#d6edf9'], ['#d5c6f2', '#ebe3f9'], ['#fcc9a4', '#fee5d2'],
+    ];
+    const LEVELS = {
+      easy:   { cols: 4, pairs: 6 },
+      normal: { cols: 4, pairs: 8 },
+      hard:   { cols: 6, pairs: 12 },
+    };
+
+    const board = document.getElementById('board');
+    const movesEl = document.getElementById('moves');
+    const pairsEl = document.getElementById('pairs');
+    const timeEl = document.getElementById('time');
+    const overlay = document.getElementById('overlay');
+
+    let level = 'normal';
+    let first = null, lock = false, moves = 0, matched = 0;
+    let startTime = 0, timer = null;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function formatTime(ms) {
+      const s = Math.floor(ms / 1000);
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function updateStatus() {
+      movesEl.textContent = moves;
+      pairsEl.textContent = `${matched} / ${LEVELS[level].pairs}`;
+    }
+
+    function stopTimer() {
+      clearInterval(timer);
+      timer = null;
+    }
+
+    function startGame() {
+      const { cols, pairs } = LEVELS[level];
+      stopTimer();
+      first = null; lock = false; moves = 0; matched = 0; startTime = 0;
+      timeEl.textContent = '0:00';
+      overlay.hidden = true;
+
+      board.style.setProperty('--cols', cols);
+      board.classList.toggle('hard', level === 'hard');
+      board.innerHTML = '';
+
+      const picks = shuffle([...EMOJIS]).slice(0, pairs)
+        .map((emoji, i) => ({ emoji, stripe: STRIPES[i % STRIPES.length] }));
+      shuffle([...picks, ...picks]).forEach(({ emoji, stripe }) => {
+        const card = document.createElement('button');
+        card.className = 'card';
+        card.dataset.emoji = emoji;
+        card.setAttribute('aria-label', '뒤집힌 카드');
+        card.innerHTML = `
+          <span class="face back"></span>
+          <span class="face front" style="--stripe:${stripe[0]};--stripe-light:${stripe[1]}">
+            <span class="corner tl">${emoji}</span>
+            <span class="pip">${emoji}</span>
+            <span class="corner br">${emoji}</span>
+          </span>`;
+        card.addEventListener('click', () => flip(card));
+        board.appendChild(card);
+      });
+      updateStatus();
+    }
+
+    function flip(card) {
+      if (lock || card === first || card.classList.contains('matched')) return;
+
+      if (!timer) {
+        startTime = Date.now();
+        timer = setInterval(() => { timeEl.textContent = formatTime(Date.now() - startTime); }, 250);
+      }
+
+      card.classList.add('flipped');
+      card.setAttribute('aria-label', card.dataset.emoji);
+
+      if (!first) { first = card; return; }
+
+      moves++;
+      if (first.dataset.emoji === card.dataset.emoji) {
+        first.classList.add('matched');
+        card.classList.add('matched');
+        first = null;
+        matched++;
+        updateStatus();
+        if (matched === LEVELS[level].pairs) win();
+      } else {
+        lock = true;
+        const a = first;
+        first = null;
+        updateStatus();
+        setTimeout(() => {
+          [a, card].forEach((c) => {
+            c.classList.remove('flipped');
+            c.setAttribute('aria-label', '뒤집힌 카드');
+          });
+          lock = false;
+        }, 800);
+      }
+    }
+
+    function win() {
+      stopTimer();
+      const elapsed = formatTime(Date.now() - startTime);
+      timeEl.textContent = elapsed;
+      document.getElementById('win-text').textContent = `${moves}번 시도, ${elapsed} 만에 모두 맞췄어요.`;
+      setTimeout(() => {
+        overlay.hidden = false;
+        document.getElementById('again').focus();
+      }, 600);
+    }
+
+    document.querySelectorAll('[data-level]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        level = btn.dataset.level;
+        document.querySelectorAll('[data-level]').forEach((b) =>
+          b.setAttribute('aria-pressed', String(b === btn)));
+        startGame();
+      });
+    });
+    document.getElementById('restart').addEventListener('click', startGame);
+    document.getElementById('again').addEventListener('click', startGame);
+
+    startGame();
+  </script>
+</body>
+</html>

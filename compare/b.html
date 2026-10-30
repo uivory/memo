@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>홈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-primary: #3182f6;
+    --text-primary: #191f28;
+    --text-secondary: #4e5968;
+    --text-muted: #8b95a1;
+    --surface-page: #f2f4f6;
+    --surface-card: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--surface-page);
+    font-family: 'Noto Sans KR', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  p { word-break: break-word; }
+  svg { display: block; }
+  button { font-family: inherit; }
+
+  .home {
+    width: 100%;
+    max-width: 390px;
+    min-height: max(844px, 100vh);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 64px 16px 34px;
+  }
+  .main { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+
+  .header { display: flex; flex-direction: column; gap: 8px; padding: 0 8px; }
+  .date { font-size: 15px; line-height: 22px; font-weight: 500; letter-spacing: -0.2px; color: var(--text-muted); }
+  .title { font-size: 28px; line-height: 38px; font-weight: 700; letter-spacing: -0.8px; color: var(--text-primary); }
+  .title em { font-style: normal; color: var(--color-primary); }
+
+  .filter { display: flex; gap: 8px; padding: 0 4px; }
+  .chip {
+    height: 36px; padding: 0 16px; border: 0; border-radius: 999px;
+    background: var(--surface-card); color: var(--text-secondary);
+    font-size: 15px; line-height: 22px; font-weight: 700; letter-spacing: -0.2px;
+    white-space: nowrap; cursor: pointer;
+  }
+  .chip.selected { background: var(--color-primary); color: #fff; }
+
+  .card { background: var(--surface-card); border-radius: 24px; padding: 8px 0; }
+  .card-header { display: flex; align-items: center; gap: 4px; height: 40px; padding: 12px 16px 4px 20px; }
+  .card-header h2 { flex: 1; min-width: 0; font-size: 15px; line-height: 22px; font-weight: 700; letter-spacing: -0.2px; color: var(--text-primary); }
+  .action {
+    display: flex; align-items: center; gap: 4px; border: 0; background: none; cursor: pointer;
+    font-size: 15px; line-height: 22px; font-weight: 500; letter-spacing: -0.2px; color: var(--text-muted); white-space: nowrap;
+  }
+
+  .memo { display: flex; align-items: center; gap: 16px; height: 72px; padding: 12px 20px; cursor: pointer; }
+  .tile { width: 44px; height: 44px; flex: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .tile.blue { background: #e8f3ff; }
+  .tile.green { background: #e3f8ec; }
+  .tile.orange { background: #fff1e5; }
+  .tile.pink { background: #ffeaf1; }
+  .content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .memo-title { font-size: 17px; line-height: 24px; font-weight: 700; letter-spacing: -0.3px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .memo-preview { font-size: 14px; line-height: 20px; font-weight: 400; letter-spacing: -0.1px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .memo-date { flex: none; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--text-muted); white-space: nowrap; }
+
+  .btn-primary {
+    position: sticky; bottom: 34px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; height: 56px; padding: 0 24px; border: 0; border-radius: 16px;
+    background: var(--color-primary); color: #fff;
+    font-size: 17px; line-height: 24px; font-weight: 700; letter-spacing: -0.2px; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="home">
+  <main class="main">
+    <div class="header">
+      <p class="date">10월 30일 금요일</p>
+      <h1 class="title">오늘까지 메모를<br><em>128개</em> 남겼어요</h1>
+    </div>
+
+    <div class="filter">
+      <button class="chip selected">전체</button>
+      <button class="chip">업무</button>
+      <button class="chip">개인</button>
+      <button class="chip">아이디어</button>
+    </div>
+
+    <section class="card">
+      <div class="card-header">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#3182F6" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2.33333H10L9.4 5.8L11.3333 8H4.66667L6.6 5.8L6 2.33333Z"/><path d="M8 8V13.3333"/></svg>
+        <h2>고정한 메모</h2>
+      </div>
+      <div class="memo">
+        <div class="tile blue"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#3182F6" stroke-width="1.83333" stroke-linecap="round" stroke-linejoin="round"><path d="M6.41667 3.66667H12.8333L16.5 7.33333V18.3333H6.41667V3.66667Z"/><path d="M12.8333 3.66667V7.33333H16.5M9.16667 11H13.75M9.16667 14.6667H13.75"/></svg></div>
+        <div class="content"><p class="memo-title">디자인 리뷰 회의록</p><p class="memo-preview">검수 기준과 다음 할 일 정리</p></div>
+        <p class="memo-date">오늘</p>
+      </div>
+      <div class="memo">
+        <div class="tile green"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#12A150" stroke-width="1.83333" stroke-linecap="round" stroke-linejoin="round"><path d="M6.41667 3.66667H12.8333L16.5 7.33333V18.3333H6.41667V3.66667Z"/><path d="M12.8333 3.66667V7.33333H16.5M9.16667 11H13.75M9.16667 14.6667H13.75"/></svg></div>
+        <div class="content"><p class="memo-title">주말 등산 준비</p><p class="memo-preview">물 두 병, 간식, 바람막이 챙기기</p></div>
+        <p class="memo-date">어제</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>최근 메모</h2>
+        <button class="action">전체 보기
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#8B95A1" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4L10 8L6 12"/></svg>
+        </button>
+      </div>
+      <div class="memo">
+        <div class="tile pink"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#E5397A" stroke-width="1.83333" stroke-linecap="round" stroke-linejoin="round"><path d="M6.41667 3.66667H12.8333L16.5 7.33333V18.3333H6.41667V3.66667Z"/><path d="M12.8333 3.66667V7.33333H16.5M9.16667 11H13.75M9.16667 14.6667H13.75"/></svg></div>
+        <div class="content"><p class="memo-title">장보기 목록</p><p class="memo-preview">우유 두 팩, 계란 한 판, 사과 다섯 개, 커피 원두 500g, 식빵, 요거트, 방울토마토, 두부, 대파, 양파, 감자, 세제와 휴지도 같이 사 오기</p></div>
+        <p class="memo-date">오늘</p>
+      </div>
+      <div class="memo">
+        <div class="tile orange"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#F76808" stroke-width="1.83333" stroke-linecap="round" stroke-linejoin="round"><path d="M6.41667 3.66667H12.8333L16.5 7.33333V18.3333H6.41667V3.66667Z"/><path d="M12.8333 3.66667V7.33333H16.5M9.16667 11H13.75M9.16667 14.6667H13.75"/></svg></div>
+        <div class="content"><p class="memo-title">앱 아이콘 아이디어</p><p class="memo-preview">메모지 모서리가 접힌 모양</p></div>
+        <p class="memo-date">오늘</p>
+      </div>
+      <div class="memo">
+        <div class="tile green"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#12A150" stroke-width="1.83333" stroke-linecap="round" stroke-linejoin="round"><path d="M6.41667 3.66667H12.8333L16.5 7.33333V18.3333H6.41667V3.66667Z"/><path d="M12.8333 3.66667V7.33333H16.5M9.16667 11H13.75M9.16667 14.6667H13.75"/></svg></div>
+        <div class="content"><p class="memo-title">읽을 책</p><p class="memo-preview">디자인 시스템 책 두 권</p></div>
+        <p class="memo-date">어제</p>
+      </div>
+    </section>
+  </main>
+
+  <button class="btn-primary">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4.16667V15.8333M4.16667 10H15.8333"/></svg>
+    새 메모 쓰기
+  </button>
+</div>
+</body>
+</html>

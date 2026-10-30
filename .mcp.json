@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "magicui": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@magicuidesign/mcp@latest"]
+    },
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=yvxankwsmeufifxwwsiy&features=docs%2Caccount%2Cdatabase%2Cdevelopment"
+    }
+  }
+}
